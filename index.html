@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <style>
+      /* styles.css */
+      #game-container {
+        text-align: center;
+        margin-top: 50px;
+      }
+
+      #color-container {
+        display: flex;
+        justify-content: center;
+        margin-bottom: 20px;
+      }
+
+      .color {
+        width: 50px;
+        height: 50px;
+        margin: 0 5px;
+        cursor: pointer;
+      }
+
+      .red {
+        background-color: red;
+      }
+      .blue {
+        background-color: blue;
+      }
+      .green {
+        background-color: green;
+      }
+      .yellow {
+        background-color: yellow;
+      }
+      .purple {
+        background-color: purple;
+      }
+
+      button {
+        padding: 10px;
+        font-size: 16px;
+      }
+    </style>
+
+    <title>Color Sorting Game</title>
+  </head>
+  <body>
+    <div id="game-container">
+      <div id="color-container" class="draggable-container">
+        <div
+          class="draggable color red"
+          data-color="red"
+          draggable="true"
+        ></div>
+        <div
+          class="draggable color blue"
+          data-color="blue"
+          draggable="true"
+        ></div>
+        <div
+          class="draggable color green"
+          data-color="green"
+          draggable="true"
+        ></div>
+        <div
+          class="draggable color yellow"
+          data-color="yellow"
+          draggable="true"
+        ></div>
+        <div
+          class="draggable color purple"
+          data-color="purple"
+          draggable="true"
+        ></div>
+      </div>
+      <button onclick="checkOrder()">Check Order</button>
+      <button onclick="handleShuffleArray()">New Game</button>
+    </div>
+
+    <script>
+      // JavaScript
+      let draggedItem = null;
+
+      document.addEventListener("dragstart", function (event) {
+        draggedItem = event.target;
+        event.dataTransfer.setData("text/plain", null);
+      });
+
+      document.addEventListener("dragover", function (event) {
+        event.preventDefault();
+      });
+
+      document.addEventListener("drop", function (event) {
+        if (event.target.classList.contains("draggable")) {
+          event.preventDefault();
+          const draggedColor = draggedItem.dataset.color;
+          const droppedColor = event.target.dataset.color;
+
+          // Swap the data-color attributes
+          draggedItem.dataset.color = droppedColor;
+          event.target.dataset.color = draggedColor;
+
+          // Swap the background colors
+          draggedItem.style.backgroundColor = droppedColor;
+          event.target.style.backgroundColor = draggedColor;
+
+          draggedItem = null;
+        }
+      });
+
+      const defaultOrder = ["red", "blue", "green", "yellow", "purple"];
+      console.log(defaultOrder);
+      function shuffleArray(array) {
+        for (let i = array.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [array[i], array[j]] = [array[j], array[i]];
+        }
+      }
+      function handleShuffleArray() {
+        shuffleArray(defaultOrder);
+      }
+
+      function checkOrder() {
+        const colorContainers = document.querySelectorAll(".color");
+        console.log("correct: ", defaultOrder);
+        console.log("chosen: ", colorContainers);
+        let correctCount = 0;
+
+        colorContainers.forEach((colorContainer, index) => {
+          const currentColor = colorContainer.dataset.color;
+          if (currentColor === defaultOrder[index]) {
+            correctCount++;
+          }
+        });
+
+        if (correctCount === 5) {
+          alert("Congratulations! You've matched the correct order.");
+        } else {
+          alert(`You have ${correctCount} colors in the right position`);
+        }
+      }
+    </script>
+  </body>
+</html>
